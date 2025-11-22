@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lim-web | Babapro</title>
+    <title>lim.prj-web | İyi şeyler yapmaya çalışıyorum.</title>
+    <link rel="icon" type="image/png" href="sss.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -207,7 +208,7 @@
             color: white; opacity: 1; -webkit-text-stroke: 0px transparent; text-shadow: 0 0 0 transparent;
             transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        body.light-mode .hero-glow-text, body.light-mode .hero-glow-text span { color: var(--text-heading); }
+        body.light-mode .hero-glow-text, .hero-glow-text span { color: var(--text-heading); }
 
         .hero-group:hover .hero-glow-text, .hero-group:hover .hero-glow-text span {
             color: transparent !important; -webkit-text-stroke: 2px #c084fc; text-shadow: 0 0 20px rgba(192, 132, 252, 0.5);
@@ -717,6 +718,9 @@
 
                         <div class="glass-card rounded-[2rem] p-10 border-t border-white/10 relative overflow-hidden">
                             <form action="https://formsubmit.co/lim.prj.dev@gmail.com" method="POST" class="space-y-6">
+                                <!-- Captcha kapama kodu -->
+                                <input type="hidden" name="_captcha" value="false">
+                                
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">İsim Soyisim</label>
                                     <input type="text" name="name" required class="contact-input w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-purple-500 focus:bg-black/60 transition-all placeholder-gray-700" placeholder="Adınız">
