@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lim-web | Babapro</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@100;400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            /* varsayilan koyu mod ayarlari */
+            --bg-body: #030303;
+            --text-main: #e0e0e0;
+            --text-heading: #ffffff;
+            --text-muted: #9ca3af;
+            
+            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-shadow: rgba(0, 0, 0, 0.8);
+            
+            --spotlight-color: 255, 255, 255; 
+            
+            --nav-bg: rgba(10, 10, 10, 0.6);
+            --nav-border: rgba(255, 255, 255, 0.08);
+            --nav-item-color: #9ca3af;
+            --nav-item-active: #ffffff;
+            
+            --code-bg: #0a0a0a;
+            --code-text: #e0e0e0;
+        }
+
+        /* burasi light mode degiskenleri */
+        body.light-mode {
+            --bg-body: #f3f4f6;
+            --text-main: #374151;
+            --text-heading: #111827;
+            --text-muted: #4b5563;
+            
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-hover-shadow: rgba(0, 0, 0, 0.05);
+            
+            --spotlight-color: 0, 0, 0;
+            
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --nav-border: rgba(0, 0, 0, 0.1);
+            --nav-item-color: #6b7280;
+            --nav-item-active: #000000;
+            
+            --code-bg: #ffffff;
+            --code-text: #1f2937;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            cursor: default;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* isik modu bozulmasin diye override yaptim */
+        body.light-mode .text-white:not(.force-text-white) { color: var(--text-heading) !important; }
+        body.light-mode .text-gray-400:not(.force-text-white) { color: var(--text-muted) !important; }
+        body.light-mode .text-gray-300:not(.force-text-white) { color: #374151 !important; }
+        body.light-mode .text-gray-500:not(.force-text-white) { color: #6b7280 !important; }
+        body.light-mode .text-gray-600:not(.force-text-white) { color: #4b5563 !important; }
+
+        body.light-mode .bg-white\/5 { background-color: rgba(0,0,0,0.05) !important; }
+        body.light-mode .border-white\/5 { border-color: rgba(0,0,0,0.05) !important; }
+        body.light-mode .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+        body.light-mode .border-white\/15 { background-color: rgba(0,0,0,0.08) !important; }
+        body.light-mode .border-white\/20 { border-color: rgba(0,0,0,0.15) !important; }
+        
+        /* iletisim kismi kartlari ozellestirme */
+        /* 1. mail dc kartlari */
+        .info-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.light-mode .info-card {
+            background-color: #ffffff !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        body.light-mode .info-card:hover {
+            border-color: rgba(0, 0, 0, 0.2) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 2. birlikte calisalim kismi */
+        .cta-card {
+            background: linear-gradient(to bottom, rgba(88, 28, 135, 0.2), #000000); /* mor siyah gecis (koyu mod icin) */
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        body.light-mode .cta-card {
+            background: linear-gradient(to bottom, #f5f3ff, #ffffff) !important; /* lila beyaz gradient (light) */
+            border-color: rgba(139, 92, 246, 0.2) !important; /* hafif mor cerceve */
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.1); /* biraz mor golge attim */
+        }
+        body.light-mode .cta-card h4 {
+            color: #5b21b6 !important; /* baslik koyu mor olsun */
+        }
+
+        /* is ariyoz rozeti */
+        body.light-mode .open-work-badge {
+            background-color: #ffffff !important;
+            border-color: rgba(0,0,0,0.1) !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        body.light-mode .open-work-text { color: #4b5563 !important; }
+
+        /* form girisleri */
+        body.light-mode .contact-input {
+            background-color: rgba(255,255,255,0.8) !important;
+            border-color: rgba(0,0,0,0.15) !important;
+            color: #111827 !important;
+        }
+        body.light-mode .contact-input::placeholder { color: #9ca3af !important; }
+        body.light-mode .contact-input:focus {
+            background-color: #ffffff !important;
+            border-color: #818cf8 !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+        }
+
+        /* kayan yazi */
+        body.light-mode .marquee-container-bg {
+            background-color: #ffffff !important;
+            border-color: rgba(0,0,0,0.1) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* ai modali */
+        body.light-mode .ai-modal-bg { background-color: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
+        body.light-mode .ai-modal-header { background-color: #f9fafb !important; border-bottom-color: rgba(0,0,0,0.05) !important; }
+        body.light-mode .ai-result-area { background-color: #f3f4f6 !important; color: #1f2937 !important; }
+        body.light-mode .ai-input-area { background-color: #f9fafb !important; border-top-color: rgba(0,0,0,0.05) !important; }
+        body.light-mode .ai-input-field { background-color: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; color: #111827 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        /* kod penceresi */
+        body.light-mode .code-window {
+            background: var(--code-bg);
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 20px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+        }
+        body.light-mode .code-window .bg-\[\#111\] { background-color: #f3f4f6 !important; border-bottom: 1px solid #e5e7eb; }
+        body.light-mode .code-window .bg-\[\#0a0a0a\]\/95 { background-color: #ffffff !important; color: #333; }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.4;
+        }
+        body.light-mode::before { opacity: 0.2; }
+
+        h1, h2, h3, h4, .font-display { font-family: 'Montserrat', sans-serif; }
+        .font-mono-logo { font-family: 'JetBrains Mono', monospace; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        body.light-mode ::-webkit-scrollbar-track { background: #f3f4f6; }
+        body.light-mode ::-webkit-scrollbar-thumb { background: #d1d5db; }
+
+        .nav-capsule {
+            background: var(--nav-bg); backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1px solid var(--nav-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .nav-capsule:hover { border-color: rgba(120, 120, 120, 0.2); transform: translateY(2px) scale(1.01); }
+        
+        .nav-item { color: var(--nav-item-color); position: relative; z-index: 10; }
+        .nav-item:hover { color: var(--nav-item-active); }
+        .nav-item.active { color: var(--nav-item-active); }
+
+        @keyframes fluorescent-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px rgba(192, 132, 252, 0.8), 0 0 30px rgba(192, 132, 252, 0.6); color: #c084fc; }
+            20%, 24%, 55% { opacity: 0.3; text-shadow: none; color: rgba(192, 132, 252, 0.3); }
+        }
+        @keyframes fluorescent-flicker-light {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 15px rgba(126, 34, 206, 0.6); color: #7e22ce; }
+            20%, 24%, 55% { opacity: 0.4; text-shadow: none; color: rgba(126, 34, 206, 0.3); }
+        }
+        @keyframes fluorescent-flicker-large {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; color: transparent; -webkit-text-stroke: 2px #c084fc; text-shadow: 0 0 20px rgba(192, 132, 252, 0.8), 0 0 40px rgba(192, 132, 252, 0.5); }
+            20%, 24%, 55% { opacity: 0.5; color: transparent; -webkit-text-stroke: 2px rgba(192, 132, 252, 0.3); text-shadow: none; }
+        }
+        @keyframes fluorescent-flicker-large-light {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; color: transparent; -webkit-text-stroke: 2px #7e22ce; text-shadow: 0 0 20px rgba(126, 34, 206, 0.6); }
+            20%, 24%, 55% { opacity: 0.5; color: transparent; -webkit-text-stroke: 2px rgba(126, 34, 206, 0.3); text-shadow: none; }
+        }
+
+        .logo-glow { transition: all 0.3s ease; }
+        .group:hover .logo-glow { animation: fluorescent-flicker 1.5s infinite alternate; }
+        body.light-mode .group:hover .logo-glow { animation: fluorescent-flicker-light 1.5s infinite alternate; }
+
+        .hero-glow-text, .hero-glow-text span {
+            color: white; opacity: 1; -webkit-text-stroke: 0px transparent; text-shadow: 0 0 0 transparent;
+            transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        body.light-mode .hero-glow-text, body.light-mode .hero-glow-text span { color: var(--text-heading); }
+
+        .hero-group:hover .hero-glow-text, .hero-group:hover .hero-glow-text span {
+            color: transparent !important; -webkit-text-stroke: 2px #c084fc; text-shadow: 0 0 20px rgba(192, 132, 252, 0.5);
+            transition: all 0.5s ease-out; animation: fluorescent-flicker-large 2s infinite alternate; animation-delay: 0.5s; 
+        }
+        body.light-mode .hero-group:hover .hero-glow-text, body.light-mode .hero-group:hover .hero-glow-text span {
+            color: transparent !important; -webkit-text-stroke: 2px #7e22ce;
+            transition: all 0.5s ease-out; animation: fluorescent-flicker-large-light 2s infinite alternate; animation-delay: 0.5s;
+        }
+
+        .blink-cursor, .cursor-blink {
+            animation: blink 1s step-end infinite; color: #c084fc; font-weight: bold; -webkit-text-fill-color: #c084fc;
+        }
+        body.light-mode .blink-cursor, body.light-mode .cursor-blink { color: #7e22ce; -webkit-text-fill-color: #7e22ce; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+            border-radius: 1.5rem; position: relative; overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s, border-color 0.3s;
+        }
+        .glass-card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(var(--spotlight-color), 0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.5s; z-index: 1; pointer-events: none;
+        }
+        body.light-mode .glass-card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0, 0.04), transparent 40%); }
+        .glass-card::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(var(--spotlight-color), 0.3), transparent 40%);
+            opacity: 0; z-index: 2; pointer-events: none; border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; -webkit-mask-composite: xor; padding: 1px;
+        }
+        body.light-mode .glass-card::after { background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0, 0.1), transparent 40%); }
+        .glass-card:hover::before, .glass-card:hover::after { opacity: 1; }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px -10px var(--glass-hover-shadow); }
+
+        .page-section {
+            display: none; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-height: 100vh; padding-top: 100px; 
+        }
+        .page-section.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .text-gradient-animate {
+            background: linear-gradient(to right, #818cf8, #c084fc, #60a5fa, #818cf8);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite; display: inline-block; padding-top: 0.1em; padding-bottom: 0.2em; line-height: 1.4;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .syntax-keyword { color: #c678dd; } .syntax-variable { color: #e5c07b; } .syntax-string { color: #98c379; } .syntax-property { color: #e06c75; } .syntax-func { color: #61afef; } .syntax-comment { color: #5c6370; font-style: italic; }
+        body.light-mode .syntax-keyword { color: #a626a4; } body.light-mode .syntax-variable { color: #986801; } body.light-mode .syntax-string { color: #50a14f; } body.light-mode .syntax-property { color: #e45649; } body.light-mode .syntax-func { color: #4078f2; } body.light-mode .syntax-comment { color: #a0a1a7; }
+
+        .marquee-container { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+        .marquee-content { display: flex; gap: 4rem; animation: scroll 40s linear infinite; width: max-content; }
+        @keyframes scroll { 100% { transform: translateX(-50%); } }
+
+        .btn-glow { position: relative; overflow: hidden; transition: all 0.3s; z-index: 1; }
+        .btn-glow::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.6s ease, height 0.6s ease; z-index: -1; }
+        body.light-mode .btn-glow::before { background: rgba(0,0,0,0.05); }
+        .btn-glow:hover::before { width: 300px; height: 300px; }
+        .btn-glow:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+        body.light-mode .btn-glow:hover { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+
+        .float { animation: floating 6s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500/30 selection:text-white">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-[95%] transition-all duration-300">
+        <div class="nav-capsule rounded-full p-2 pr-3 pl-5 flex items-center gap-6 sm:gap-8">
+            <div class="cursor-pointer flex items-center group" onclick="navigateTo('home')">
+                <span class="logo-glow text-xl font-bold text-white force-text-white tracking-tight font-mono-logo" style="color: var(--text-heading)">
+                    lim<span class="blink-cursor">_</span>
+                </span>
+            </div>
+            
+            <div class="hidden md:flex items-center relative bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-md">
+                <div id="nav-backdrop" class="absolute bg-white/15 rounded-full transition-all duration-300 ease-out z-0"></div>
+                <button onclick="navigateTo('home')" class="nav-item px-6 py-2 rounded-full text-xs font-bold tracking-wide transition-all uppercase duration-300 bg-transparent" data-target="home">Ana Sayfa</button>
+                <button onclick="navigateTo('projects')" class="nav-item px-6 py-2 rounded-full text-xs font-bold tracking-wide transition-all uppercase duration-300 bg-transparent" data-target="projects">Projeler</button>
+                <button onclick="navigateTo('about')" class="nav-item px-6 py-2 rounded-full text-xs font-bold tracking-wide transition-all uppercase duration-300 bg-transparent" data-target="about">Hakkımda</button>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-white/5 hover:bg-white/10 text-gray-400 hover:text-yellow-400" id="themeBtn" title="Tema Değiştir">
+                    <i data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+                <button onclick="navigateTo('contact')" class="bg-white force-text-white text-black hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center transition-all transform hover:scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)]" title="İletişim">
+                    <i data-lucide="message-square-plus" class="w-5 h-5 text-black"></i>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-gray-300 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobileMenu" class="fixed top-24 left-1/2 transform -translate-x-1/2 w-[90%] glass-card rounded-2xl p-4 z-40 hidden flex-col gap-2 origin-top md:hidden">
+        <button onclick="navigateTo('home'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white transition-colors font-bold">Ana Sayfa</button>
+        <button onclick="navigateTo('projects'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white transition-colors font-bold">Projeler</button>
+        <button onclick="navigateTo('about'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white transition-colors font-bold">Hakkımda</button>
+        <button onclick="navigateTo('contact'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white transition-colors font-bold">İletişim</button>
+    </div>
+
+    <main class="container mx-auto px-4 min-h-screen pb-12">
+
+        <section id="home" class="page-section active relative pt-28 pb-10">
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
+                
+                <div class="order-2 lg:order-1 flex flex-col items-start text-left z-10">
+                    <div class="open-work-badge mb-8 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1a1a1a]/80 border border-white/10 backdrop-blur-sm shadow-lg animate-fade-in-up transition-all">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span class="open-work-text text-[10px] font-bold tracking-widest text-gray-400 uppercase transition-colors">Open for Work</span>
+                    </div>
+
+                    <div class="mb-6 relative group hero-group cursor-default">
+                        <div class="absolute -inset-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition duration-700"></div>
+                        <h1 class="hero-glow-text relative text-8xl md:text-9xl font-bold tracking-tighter text-white font-mono-logo leading-none drop-shadow-2xl">
+                            lim<span class="text-gray-600 font-bold tracking-normal">//</span><span class="text-gray-600">&gt;</span>
+                        </h1>
+                    </div>
+
+                    <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-6 font-display text-white h-28 md:h-auto">
+                        Kod, Tasarım ve <br>
+                        <span id="changing-text" class="text-gradient-animate min-w-[10px]">Geleceğin Araçları<span class="blink-cursor">_</span></span>
+                    </h2>
+
+                    <p class="text-gray-400 text-base md:text-lg leading-relaxed max-w-lg mb-10 font-light">
+                        Merhaba, ben <strong class="text-white border-b border-purple-500/50">limon</strong>. Açık kaynak dünyasında minimalist ve yüksek performanslı araçlar geliştiriyorum. Karmaşıklığı sevmem, sadeliği kodlarım.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 mb-16">
+                        <button onclick="navigateTo('projects')" class="btn-glow group px-8 py-4 bg-white force-text-white text-black rounded-full font-bold text-sm tracking-wide flex items-center gap-2 shadow-lg">
+                            Keşfetmeye Başla 
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button onclick="navigateTo('contact')" class="btn-glow px-8 py-4 rounded-full font-bold text-sm tracking-wide text-white border border-white/20 hover:bg-white/5 flex items-center gap-2">
+                            İletişime Geç
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-8 md:gap-12 border-t border-white/10 pt-8 w-full stats-border transition-colors">
+                        <div class="group cursor-default">
+                            <h4 class="text-2xl font-black text-white font-display group-hover:text-purple-400 transition-colors">10+</h4>
+                            <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">AÇIK KAYNAK</span>
+                        </div>
+                        <div class="group cursor-default">
+                            <h4 class="text-2xl font-black text-white font-display group-hover:text-blue-400 transition-colors">v11</h4>
+                            <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">BAT.BAT SÜRÜMÜ</span>
+                        </div>
+                        <div class="group cursor-default">
+                            <h4 class="text-2xl font-black text-white font-display group-hover:text-green-400 transition-colors">∞</h4>
+                            <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">KAHVE & KOD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-1 lg:order-2 relative flex justify-center lg:justify-end float">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-r from-purple-900/30 to-blue-900/30 blur-[100px] rounded-full -z-10 animate-pulse"></div>
+
+                    <div class="code-window rounded-xl w-full max-w-lg overflow-hidden relative z-10 transform rotate-1 lg:rotate-2 hover:rotate-0 transition-all duration-700">
+                        <div class="bg-[#111] px-4 py-3 flex items-center gap-2 border-b border-white/5">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:opacity-80 cursor-pointer"></div>
+                                <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:opacity-80 cursor-pointer"></div>
+                                <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:opacity-80 cursor-pointer"></div>
+                            </div>
+                            <div class="ml-auto flex items-center gap-2 text-[10px] text-gray-500 font-mono border border-white/5 px-2 py-1 rounded bg-black/20">
+                                <i data-lucide="file-code" class="w-3 h-3"></i> index.js
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 md:p-8 font-mono text-xs md:text-sm leading-loose bg-[#0a0a0a]/95 text-gray-300 relative group">
+                            <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="text-[10px] text-gray-600 font-bold">READ ONLY</div>
+                            </div>
+                            <div><span class="syntax-keyword">const</span> <span class="syntax-func">developer</span> = {</div>
+                            <div class="pl-4"><span class="syntax-property">name</span>: <span class="syntax-string">'limon'</span>,</div>
+                            <div class="pl-4"><span class="syntax-property">role</span>: <span class="syntax-string">'Full Stack Dev'</span>,</div>
+                            <div class="pl-4"><span class="syntax-property">skills</span>: [</div>
+                            <div class="pl-8"><span class="syntax-string">'JavaScript'</span>, <span class="syntax-string">'C#'</span>,</div>
+                            <div class="pl-8"><span class="syntax-string">'React'</span>, <span class="syntax-string">'AI Integration'</span></div>
+                            <div class="pl-4">],</div>
+                            <div class="pl-4"><span class="syntax-func">buildFuture</span>: <span class="syntax-keyword">async function</span>() {</div>
+                            <div class="pl-8"><span class="syntax-keyword">await</span> <span class="syntax-func">coding</span>();</div>
+                            <div class="pl-8"><span class="syntax-keyword">return</span> <span class="syntax-string">"Success"</span>;</div>
+                            <div class="pl-4">}</div>
+                            <div>};</div>
+                            <br>
+                            <div class="syntax-comment">// is yapalim mi?</div>
+                            <div><span class="syntax-variable">developer</span>.<span class="syntax-func">startProject</span>()<span class="animate-pulse text-purple-400">_</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- burasi hizmetler kismi -->
+            <div class="mt-24 mb-24 max-w-7xl mx-auto w-full">
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="w-12 h-[1px] bg-gray-600"></span>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest font-display">Hizmetler & Yaklaşım</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 hover:bg-white/5 transition-colors group cursor-default h-full" style="--spotlight-color: 250, 204, 21;">
+                        <i data-lucide="zap" class="w-8 h-8 text-yellow-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-white mb-2">Hızlı Prototipleme</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Fikirleri haftalar değil, günler içinde çalışan ürünlere dönüştürüyorum.</p>
+                    </div>
+                    <div class="glass-card p-6 hover:bg-white/5 transition-colors group cursor-default h-full" style="--spotlight-color: 74, 222, 128;">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-green-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-white mb-2">Temiz Kod</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Sürdürülebilir, okunabilir ve ölçeklenebilir kod mimarisi.</p>
+                    </div>
+                    <div class="glass-card p-6 hover:bg-white/5 transition-colors group cursor-default h-full" style="--spotlight-color: 96, 165, 250;">
+                        <i data-lucide="smartphone" class="w-8 h-8 text-blue-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-white mb-2">Responsive Tasarım</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Her cihazda ve ekran boyutunda kusursuz görünen arayüzler.</p>
+                    </div>
+                    <div class="glass-card p-6 hover:bg-white/5 transition-colors group cursor-default h-full" style="--spotlight-color: 192, 132, 252;">
+                        <i data-lucide="globe" class="w-8 h-8 text-purple-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="font-bold text-white mb-2">SEO Uyumlu</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Arama motorlarında üst sıralarda yer almanız için optimize edilmiş yapı.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- kayan yazi alani -->
+            <div class="relative w-full flex justify-center pb-10">
+                <div class="marquee-container-bg w-[95%] md:w-[80%] bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden py-3 shadow-2xl transition-all">
+                    <div class="marquee-container relative w-full overflow-hidden">
+                        <div class="marquee-content items-center">
+                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="hexagon" class="w-4 h-4 text-green-500"></i> Node.js</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="box" class="w-4 h-4 text-white force-text-white"></i> Three.js</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="wind" class="w-4 h-4 text-cyan-400"></i> Tailwind</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="file-code" class="w-4 h-4 text-yellow-400"></i> Python</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="database" class="w-4 h-4 text-orange-400"></i> Firebase</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="git-branch" class="w-4 h-4 text-red-400"></i> Git</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="atom" class="w-4 h-4 text-blue-400"></i> React</div>
+                            
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="hexagon" class="w-4 h-4 text-green-500"></i> Node.js</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="box" class="w-4 h-4 text-white force-text-white"></i> Three.js</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="wind" class="w-4 h-4 text-cyan-400"></i> Tailwind</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="file-code" class="w-4 h-4 text-yellow-400"></i> Python</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="database" class="w-4 h-4 text-orange-400"></i> Firebase</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="git-branch" class="w-4 h-4 text-red-400"></i> Git</div>
+                            <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="atom" class="w-4 h-4 text-blue-400"></i> React</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- alt kisim (ana sayfa) -->
+            <footer class="max-w-7xl mx-auto mt-20 mb-10">
+                <div class="glass-card rounded-[3rem] p-10 md:p-16 relative overflow-hidden group">
+                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none transition-opacity duration-700 group-hover:opacity-70"></div>
+                    
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="flex flex-col gap-2 text-center md:text-left">
+                            <span class="text-white font-black text-3xl tracking-tighter font-display">lim-web</span>
+                            <span class="text-gray-500 text-sm font-mono">Minimalist. Performanslı. Modern.</span>
+                            <span class="text-gray-600 text-xs mt-4">© 2025 Designed by limon</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <a href="https://github.com/frost-ium" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-white transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="github" class="w-5 h-5"></i></a>
+                            <a href="https://twitter.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-blue-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                            <a href="https://instagram.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-pink-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                            <a href="https://youtube.com/@frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-red-500 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </section>
+        
+        <section id="projects" class="page-section">
+            <div class="max-w-7xl mx-auto min-h-[80vh] flex flex-col justify-center">
+                
+                <div class="text-center mb-20 mt-10">
+                    <h1 class="text-5xl md:text-6xl font-black mb-6 font-display tracking-tight text-white">
+                        Tüm <span class="text-gradient-animate">Projelerim</span>
+                    </h1>
+                    <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+                        Kod, tasarım ve yenilikçi fikirlerin birleştiği, hobi amaçlı geliştirdiğim açık kaynak araçlar ve yazılımlar.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cards-container">
+                    <!-- Bat.bat CLI -->
+                    <div class="glass-card p-8 flex flex-col justify-between group" style="--spotlight-color: 168, 85, 247;"> <!-- mor parlama efekti -->
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="p-3 bg-purple-500/10 rounded-2xl text-purple-400 border border-purple-500/20 group-hover:scale-110 transition-transform duration-300">
+                                    <i data-lucide="terminal" class="w-8 h-8"></i>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white font-display mb-2">Bat.bat CLI Tool</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                Windows ortamında sıradan görevleri otomatikleştirmek için tasarlanmış, toplu işlem (batch) tabanlı hızlı ve hafif komut satırı aracı.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">CLI</span>
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">AUTOMATION</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="https://github.com/frostium7/bat.bat" target="_blank" class="flex-1 py-3 rounded-xl border border-white/10 text-sm font-bold text-center text-gray-300 hover:bg-white/10 hover:text-white transition-all">GitHub</a>
+                            <a href="#" class="flex-1 py-3 rounded-xl bg-purple-600 force-text-white text-white text-sm font-bold text-center hover:bg-purple-500 transition-all shadow-lg shadow-purple-900/20">İndir</a>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio -->
+                    <div class="glass-card p-8 flex flex-col justify-between group" style="--spotlight-color: 59, 130, 246;"> <!-- mavi isik -->
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="p-3 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
+                                    <i data-lucide="layout-grid" class="w-8 h-8"></i>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white font-display mb-2">lim-web Portfolio v2</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                Minimalist estetiği, canlı arka plan animasyonları ve kusursuz yanıt verme yeteneği ile modern bir portföy deneyimi sunar.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">WEB</span>
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">UI/UX</span>
+                            </div>
+                        </div>
+                        <button onclick="alert('Zaten bu sitedesiniz!')" class="w-full py-3 rounded-xl bg-blue-600 force-text-white text-white text-sm font-bold text-center hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">Canlı Görüntüle</button>
+                    </div>
+
+                    <!-- Quantum -->
+                    <div class="glass-card p-8 flex flex-col justify-between group" style="--spotlight-color: 34, 197, 94;"> <!-- yesil isik -->
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="p-3 bg-green-500/10 rounded-2xl text-green-400 border border-green-500/20 group-hover:scale-110 transition-transform duration-300">
+                                    <i data-lucide="atom" class="w-8 h-8"></i>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 text-gray-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white font-display mb-2">Quantum Qubit Sim.</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                Kuantum hesaplama kavramlarını basitçe görselleştiren deneysel bir proje. Qubit durumlarını 3D olarak simüle eder.
+                            </p>
+                             <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">PHYSICS</span>
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">WEBGL</span>
+                            </div>
+                        </div>
+                        <button disabled class="w-full py-3 rounded-xl bg-white/5 text-gray-500 text-sm font-bold text-center cursor-not-allowed border border-white/5">Çok Yakında</button>
+                    </div>
+
+                    <!-- AI -->
+                    <div class="glass-card p-8 flex flex-col justify-between group" style="--spotlight-color: 99, 102, 241;"> <!-- indigo rengi -->
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="p-3 bg-indigo-500/10 rounded-2xl text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+                                    <i data-lucide="bot" class="w-8 h-8"></i>
+                                </div>
+                                <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400 animate-pulse"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white font-display mb-2">AI Kod Asistanı</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                Google Gemini destekli, tarayıcı içi akıllı kod üretici. İhtiyacını yaz, kodu hemen al.
+                            </p>
+                             <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">GEMINI API</span>
+                                <span class="text-[10px] font-bold bg-white/5 px-3 py-1 rounded-full text-gray-400 border border-white/5">AI</span>
+                            </div>
+                        </div>
+                        <button onclick="openAiModal()" class="w-full py-3 rounded-xl bg-indigo-600 force-text-white hover:bg-indigo-500 text-white text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20">Asistanı Başlat <i data-lucide="play" class="w-3 h-3 fill-current"></i></button>
+                    </div>
+
+                    <div class="glass-card p-8 flex flex-col items-center justify-center text-center opacity-70 hover:opacity-100 transition-all border-dashed border-2 border-white/10 hover:border-white/30 group min-h-[300px]">
+                        <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-white/10 transition-colors group-hover:scale-110 duration-300">
+                            <i data-lucide="plus" class="w-8 h-8 text-gray-400 group-hover:text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Yeni Fikirler Yolda...</h3>
+                        <p class="text-gray-400 text-sm max-w-xs leading-relaxed">Sıradaki projemizin ne olacağını görmek için bizi takip edin!</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- hakkimizda kismi icerikleri -->
+        <section id="about" class="page-section">
+             <!-- ayni icerik devam -->
+            <div class="max-w-5xl mx-auto pt-10">
+                <div class="glass-card rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden mb-12">
+                    <div class="relative z-10 flex flex-col md:flex-row gap-16 items-center md:items-start">
+                        <div class="flex-shrink-0 text-center group relative">
+                            <div class="relative w-48 h-48 rounded-full p-1 bg-[#1a1a1a] border border-white/10 shadow-2xl">
+                                <img src="https://i.pinimg.com/originals/24/6a/31/246a311211af701c497d73ad271edfb5.gif" class="w-full h-full object-cover rounded-full opacity-90 hover:opacity-100 transition-opacity" alt="limon">
+                            </div>
+                            <div class="mt-6">
+                                <h2 class="text-3xl font-black text-white font-display">limon</h2>
+                                <p class="text-blue-400 text-sm font-mono mb-4">Full Stack Developer</p>
+                                <div class="flex justify-center gap-3">
+                                    <a href="https://github.com/frost-ium" target="_blank" class="p-3 bg-white/5 rounded-full hover:bg-white/20 transition-colors border border-white/5"><i data-lucide="github" class="w-5 h-5"></i></a>
+                                    <a href="https://twitter.com/frostium_" target="_blank" class="p-3 bg-white/5 rounded-full hover:bg-white/20 transition-colors border border-white/5"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow text-center md:text-left">
+                            <h3 class="text-4xl font-black mb-6 font-display text-white flex items-center justify-center md:justify-start gap-4">
+                                Hakkımda <div class="hidden md:block h-px w-20 bg-white/10"></div>
+                            </h3>
+                            <div class="space-y-6 text-gray-300 leading-loose text-lg font-light">
+                                <p>Merhaba! Ben <strong class="text-white">f-prj</strong>'nin kurucusuyum. Teknolojiye olan merakım, beni basit scriptler yazmaktan kapsamlı web uygulamaları geliştirmeye taşıdı.</p>
+                                <p>Kod yazarken önceliğim her zaman <span class="text-blue-400 font-semibold">performans</span> ve <span class="text-purple-400 font-semibold">kullanıcı deneyimi</span>.</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-6 mt-10">
+                                <div class="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div class="text-3xl font-bold text-white">3+</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">Yıl Deneyim</div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div class="text-3xl font-bold text-white">15+</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">Proje</div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div class="text-3xl font-bold text-white">7/24</div>
+                                    <div class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">Coding</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold mb-8 font-display text-white flex items-center gap-4 pl-2">
+                    <span class="w-1 h-8 bg-blue-500 rounded-full"></span> Neler Yapıyorum?
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16" id="skills-container">
+                    <div class="glass-card p-6 rounded-2xl hover:bg-blue-900/10 transition-all group" style="--spotlight-color: 59, 130, 246;">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 transition-transform border border-blue-500/20"><i data-lucide="layout" class="w-6 h-6"></i></div>
+                        <h4 class="text-lg font-bold text-white mb-2">Web Geliştirme</h4>
+                        <p class="text-sm text-gray-400 leading-relaxed">Modern, responsive ve hızlı web siteleri. React, Tailwind ve modern UI kütüphaneleri.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl hover:bg-purple-900/10 transition-all group" style="--spotlight-color: 168, 85, 247;">
+                         <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform border border-purple-500/20"><i data-lucide="terminal" class="w-6 h-6"></i></div>
+                        <h4 class="text-lg font-bold text-white mb-2">Sistem Araçları</h4>
+                        <p class="text-sm text-gray-400 leading-relaxed">Windows ve Linux için otomasyon scriptleri.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl hover:bg-green-900/10 transition-all group" style="--spotlight-color: 34, 197, 94;">
+                         <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-400 mb-4 group-hover:scale-110 transition-transform border border-green-500/20"><i data-lucide="database" class="w-6 h-6"></i></div>
+                        <h4 class="text-lg font-bold text-white mb-2">Backend & API</h4>
+                        <p class="text-sm text-gray-400 leading-relaxed">Node.js ve Python ile güvenli API mimarileri.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold mb-8 font-display text-white flex items-center gap-4 pl-2">
+                    <span class="w-1 h-8 bg-pink-500 rounded-full"></span> Yolculuğum
+                </h3>
+                
+                <div class="glass-card p-8 rounded-2xl mb-20 border border-white/5">
+                    <div class="space-y-8">
+                        <div class="flex gap-6 group">
+                            <div class="flex flex-col items-center">
+                                <div class="w-4 h-4 rounded-full bg-pink-500 mt-1.5 shadow-[0_0_10px_rgba(236,72,153,0.5)] group-hover:scale-125 transition-transform"></div>
+                                <div class="w-0.5 flex-grow bg-gradient-to-b from-pink-500/50 to-transparent mt-2"></div>
+                            </div>
+                            <div class="pb-2">
+                                <span class="text-xs font-mono text-pink-400 bg-pink-500/10 px-2 py-1 rounded border border-pink-500/20">2024 - Günümüz</span>
+                                <h4 class="text-xl font-bold text-white mt-3 mb-2">Freelance Full Stack Developer</h4>
+                                <p class="text-sm text-gray-400 leading-relaxed max-w-xl">Açık kaynak projeler ve müşteri odaklı web çözümleri geliştiriyorum.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 group">
+                            <div class="flex flex-col items-center">
+                                <div class="w-4 h-4 rounded-full bg-gray-600 mt-1.5 group-hover:scale-125 transition-transform"></div>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono text-gray-500 bg-white/5 px-2 py-1 rounded border border-white/5">2022 - 2023</span>
+                                <h4 class="text-xl font-bold text-gray-300 mt-3 mb-2">Junior Developer & Öğrenci</h4>
+                                <p class="text-sm text-gray-500 leading-relaxed max-w-xl">Python ve C# temelleri, ilk otomasyon scriptleri.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="page-section">
+            <div class="max-w-6xl mx-auto pt-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                    <div>
+                        <div class="mb-10">
+                            <h2 class="text-5xl font-black font-display mb-6 tracking-tight text-white">İletişime Geç</h2>
+                            <p class="text-gray-400 text-lg leading-relaxed">
+                                Yeni bir proje fikrin mi var? Yoksa sadece merhaba mı demek istiyorsun? Formu doldur, en kısa sürede dönüş yapayım.
+                            </p>
+                        </div>
+
+                        <div class="glass-card rounded-[2rem] p-10 border-t border-white/10 relative overflow-hidden">
+                            <form action="https://formsubmit.co/lim.prj.dev@gmail.com" method="POST" class="space-y-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">İsim Soyisim</label>
+                                    <input type="text" name="name" required class="contact-input w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-purple-500 focus:bg-black/60 transition-all placeholder-gray-700" placeholder="Adınız">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">E-posta Adresi</label>
+                                    <input type="email" name="email" required class="contact-input w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-purple-500 focus:bg-black/60 transition-all placeholder-gray-700" placeholder="mail@ornek.com">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Öneriniz</label>
+                                        <button type="button" onclick="refineMessage()" class="text-[10px] flex items-center gap-1 text-purple-400 hover:text-purple-300 bg-purple-500/10 px-3 py-1.5 rounded-lg hover:bg-purple-500/20 transition-colors border border-purple-500/10" id="refineBtn">
+                                            <i data-lucide="sparkles" class="w-3 h-3"></i> AI ile Güzelleştir
+                                        </button>
+                                    </div>
+                                    <textarea name="suggestion" id="suggestion" required rows="5" class="contact-input w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-purple-500 focus:bg-black/60 transition-all placeholder-gray-700 resize-none" placeholder="Proje detaylarından bahsedin..."></textarea>
+                                </div>
+                                <button type="submit" class="btn-glow w-full bg-white force-text-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 flex justify-center items-center gap-2 text-sm tracking-wide shadow-xl">
+                                    GÖNDER <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center space-y-6">
+                         <!-- mail karti -->
+                         <div class="info-card p-6 rounded-3xl">
+                             <div class="flex items-center gap-4 mb-4">
+                                 <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i data-lucide="mail" class="w-5 h-5"></i></div>
+                                 <div><h4 class="text-white font-bold">Email</h4><p class="text-gray-500 text-sm">info@frostium.dev</p></div>
+                             </div>
+                             <p class="text-gray-400 text-sm">Genellikle 24 saat içinde dönüş yapıyorum.</p>
+                         </div>
+                         <!-- dc karti -->
+                         <div class="info-card p-6 rounded-3xl">
+                             <div class="flex items-center gap-4 mb-4">
+                                 <div class="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                                 <div><h4 class="text-white font-bold">Discord</h4><p class="text-gray-500 text-sm">frostium_</p></div>
+                             </div>
+                             <p class="text-gray-400 text-sm">Anlık sohbet ve topluluk için.</p>
+                         </div>
+                         <!-- cta karti (birlikte calisalim) -->
+                         <div class="cta-card h-full rounded-3xl flex items-center justify-center text-center p-8">
+                             <div><h4 class="text-2xl font-bold text-white font-display mb-2">Birlikte Çalışalım</h4><p class="text-gray-400 text-sm">Harika işler çıkaracağımıza eminim.</p></div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iletisim sayfasi alt kismi -->
+            <footer class="max-w-7xl mx-auto mt-20 mb-10">
+                <div class="glass-card rounded-[3rem] p-10 md:p-16 relative overflow-hidden group">
+                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none transition-opacity duration-700 group-hover:opacity-70"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="flex flex-col gap-2 text-center md:text-left">
+                            <span class="text-white font-black text-3xl tracking-tighter font-display">lim-web</span>
+                            <span class="text-gray-500 text-sm font-mono">Minimalist. Performanslı. Modern.</span>
+                            <span class="text-gray-600 text-xs mt-4">© 2025 Designed by limon</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <a href="https://github.com/frost-ium" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-white transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="github" class="w-5 h-5"></i></a>
+                            <a href="https://twitter.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-blue-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                            <a href="https://instagram.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-pink-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                            <a href="https://youtube.com/@frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-red-500 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- ai modali duzelttim biraz -->
+    <div id="aiModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-lg transition-opacity duration-300" onclick="closeAiModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="ai-modal-bg glass-card w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh] pointer-events-auto transform transition-all scale-95 opacity-0 ai-modal-content border-gray-700/50 bg-[#0f0f0f]">
+                <div class="ai-modal-header flex justify-between items-center p-6 border-b border-white/5 bg-black/20">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-500 p-2 rounded-lg shadow-lg"><i data-lucide="bot" class="w-5 h-5 text-white"></i></div>
+                        <div><h3 class="text-lg font-bold text-white">AI Kod Asistanı</h3><p class="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Gemini 2.0 Experimental</p></div>
+                    </div>
+                    <button onclick="closeAiModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <div id="aiResult" class="ai-result-area flex-grow overflow-y-auto p-8 text-gray-300 text-sm font-mono space-y-4 min-h-[300px] bg-[#0a0a0a]">
+                    <div class="flex flex-col items-center justify-center h-full text-gray-700 gap-4 py-10">
+                        <i data-lucide="terminal-square" class="w-16 h-16 opacity-20"></i>
+                        <p class="font-sans text-gray-500">Bir şeyler yazın, AI sizin için kodlasın.</p>
+                    </div>
+                </div>
+                <div class="ai-input-area p-4 border-t border-white/5 bg-black/20 rounded-b-2xl backdrop-blur-md">
+                    <div class="flex gap-3">
+                        <input type="text" id="aiPrompt" class="ai-input-field flex-grow bg-[#151515] border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 transition-all text-sm placeholder-gray-600 shadow-inner" placeholder="Örn: Python ile Snake oyunu yap..." onkeypress="handleEnter(event)">
+                        <button onclick="generateCode()" id="generateBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 rounded-xl transition-all shadow-lg shadow-indigo-900/20"><i data-lucide="sparkles" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        const apiKey = ""; 
+
+        lucide.createIcons();
+        
+        // -- basliktaki yazi yazma efekti --
+        const typingTexts = [
+            "Geleceğin Araçları",
+            "Yapay Zeka Çözümleri",
+            "Sınırsız İnovasyon",
+            "Güçlü Algoritmalar",
+            "Modern Tasarımlar",
+            "Hızlı Prototipleme",
+            "Açık Kaynak Kod"
+        ];
+        
+        const typeSpeed = 100;  // YAVASLATTIM (eski hali 60ti)
+        const deleteSpeed = 80; // YAVASLATTIM (eskisi 40)
+        const waitTime = 5000; // bekleme suresi (5 sn falan)
+
+        let textIndex = 0;
+        let charIndex = typingTexts[0].length;
+        let isDeleting = false;
+        let isWaiting = true; // basta beklesin
+
+        function typeEffect() {
+            const textElement = document.getElementById("changing-text");
+            const currentText = typingTexts[textIndex];
+
+            if (isWaiting) {
+                // bekliyosa bisey yapma zamanlayiciyi bekle iste
+                return;
+            }
+
+            if (isDeleting) {
+                // siliyoruz burda
+                charIndex--;
+                // silerken imlec sabit kalsin daha duzgun duruyo
+                textElement.innerHTML = currentText.substring(0, charIndex) + '<span class="text-gray-500 font-bold">_</span>';
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % typingTexts.length; // diger yaziya gec
+                    setTimeout(typeEffect, 200); // yeni yaziya baslamadan az bekle
+                } else {
+                    setTimeout(typeEffect, deleteSpeed);
+                }
+            } else {
+                // yazma islemi
+                charIndex++;
+                // yazarken imlec oynamasin
+                textElement.innerHTML = currentText.substring(0, charIndex) + '<span class="text-gray-500 font-bold">_</span>';
+                
+                if (charIndex === currentText.length) {
+                    // bitti yazma, bekleme moduna al
+                    isWaiting = true;
+                    // BURASI ONEMLI: bitince imlec yanip sonsun
+                    textElement.innerHTML = currentText + '<span class="cursor-blink">_</span>';
+                    
+                    setTimeout(() => {
+                        isWaiting = false;
+                        isDeleting = true;
+                        typeEffect();
+                    }, waitTime);
+                } else {
+                    setTimeout(typeEffect, typeSpeed);
+                }
+            }
+        }
+
+        // ilk acilista 5 sn bekle sonra silmeye basla
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                isWaiting = false;
+                isDeleting = true; // ilk silmeyle baslicak
+                typeEffect();
+            }, waitTime);
+        });
+
+        // --- logo etkilesimi kodlari ---
+        // basliga gelince logo degissin iste
+        
+        const heroTitle = document.querySelector('.hero-group');
+        const navLogo = document.querySelector('.logo-glow');
+        let navTypeInterval;
+
+        if(heroTitle && navLogo) {
+            heroTitle.addEventListener('mouseenter', () => {
+                // htmli temizle yoksa bosluklar sorun yapiyo
+                if (navLogo.innerHTML.includes('\n')) {
+                    navLogo.innerHTML = 'lim<span class="blink-cursor">_</span>';
+                }
+                animateNavLogo("limit yok!");
+            });
+
+            heroTitle.addEventListener('mouseleave', () => {
+                animateNavLogo("lim");
+            });
+        }
+
+        function animateNavLogo(targetText) {
+            clearInterval(navTypeInterval);
+            
+            navTypeInterval = setInterval(() => {
+                // metni al sondaki cizgiyi sil
+                // DUZELTME: trimi kaldirdim bosluklu hali lazim cünkü
+                // sadece sondaki cizgiyi siliyoz
+                let currentText = navLogo.textContent.replace(/_$/, '');
+                
+                // bastaki bosluklari temizle
+                // boylece limit sonundaki bosluk kaliyo ama bastaki gidiyo
+                currentText = currentText.replace(/^\s+/, '');
+
+                if (currentText === targetText) {
+                    clearInterval(navTypeInterval);
+                    return;
+                }
+
+                let nextText = "";
+
+                if (targetText.startsWith(currentText) && currentText.length < targetText.length) {
+                    // yazma kismi: eger devamiysa ekle iste
+                    nextText = targetText.substring(0, currentText.length + 1);
+                } else {
+                    // silme kismi: uymuyosa sil gitsin
+                    nextText = currentText.substring(0, currentText.length - 1);
+                }
+
+                // htmli guncelle imlecle beraber
+                navLogo.innerHTML = nextText + '<span class="blink-cursor">_</span>';
+            }, 150); // HIZ AYARI: 60tan 150ye cektim daha yavas olsun
+        }
+
+
+        // -- bolum renkleri temalar falan --
+        // gecislerde arka plan rengi hafif degissin diye
+        const sections = ['home', 'projects', 'about', 'contact'];
+        const sectionThemes = {
+            'home': { star: 0x818cf8, fog: 0x030303 }, // varsayilan mor mavi
+            'projects': { star: 0x3b82f6, fog: 0x050a14 }, // mavi
+            'about': { star: 0xc084fc, fog: 0x0f0514 }, // mor pembe karisik
+            'contact': { star: 0x34d399, fog: 0x021008 }  // yesil iste
+        };
+
+        let currentSectionIndex = 0;
+        let targetPageX = 0; // kameranin gitcegi yer
+        let cameraBaseX = 0; // kameranin su anki yeri
+
+        // navigasyon mantigi
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialPage = window.location.hash.substring(1) || 'home';
+            navigateTo(initialPage);
+            
+            // kayan buton icin baslangic ayari
+            const btn = document.querySelector(`.nav-item[data-target="${initialPage}"]`);
+            if(btn) updateNavIndicator(btn);
+
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+                updateIcons();
+                updateStarColor(true);
+            }
+        });
+        window.addEventListener('popstate', () => navigateTo(window.location.hash.substring(1) || 'home', false));
+
+        function updateNavIndicator(activeBtn) {
+            const indicator = document.getElementById('nav-backdrop');
+            if(activeBtn && indicator) {
+                indicator.style.width = `${activeBtn.offsetWidth}px`;
+                indicator.style.left = `${activeBtn.offsetLeft}px`;
+                indicator.style.height = `${activeBtn.offsetHeight}px`;
+                // dikey ortalama icin top gerekir belki ama flex hallediyo zaten
+            }
+        }
+        
+        // ekran boyutu degisirse pozisyonu guncelle
+        window.addEventListener('resize', () => {
+            const currentBtn = document.querySelector('.nav-item.active');
+            if(currentBtn) updateNavIndicator(currentBtn);
+            
+            cam.aspect = window.innerWidth/window.innerHeight;
+            cam.updateProjectionMatrix();
+            ren.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function navigateTo(pageId, pushState = true) {
+            const target = document.getElementById(pageId);
+            if (!target) return;
+            
+            if (pushState) history.pushState(null, null, `#${pageId}`);
+            
+            // -- parallax nav mantigi --
+            const newIndex = sections.indexOf(pageId);
+            if(newIndex !== -1) {
+                const direction = newIndex - currentSectionIndex;
+                currentSectionIndex = newIndex;
+                
+                // yone gore kamerayi saga sola kaydiriyoz uzay hissi versin
+                targetPageX += direction * 1000; 
+                
+                // renkleri guncelle
+                updateThemeColors(pageId);
+            }
+
+            document.querySelectorAll('.page-section').forEach(s => {
+                s.classList.remove('active');
+                s.style.opacity = '0';
+                s.style.transform = 'translateY(20px)';
+            });
+
+            setTimeout(() => {
+                target.classList.add('active');
+                void target.offsetWidth; 
+                target.style.opacity = '1';
+                target.style.transform = 'translateY(0)';
+            }, 50);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active', 'text-white');
+                if(btn.getAttribute('data-target') === pageId) {
+                    btn.classList.add('active');
+                    // animasyonu tetikle
+                    updateNavIndicator(btn);
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+        let starsMaterial; 
+        let nebulaMaterial; 
+        
+        // gecisler icin hedef renkler
+        const targetStarColor = new THREE.Color(0x818cf8);
+        const targetFogColor = new THREE.Color(0x030303);
+
+        function updateThemeColors(pageId) {
+            if (document.body.classList.contains('light-mode')) return; // light modda renklere dokunma
+            
+            const theme = sectionThemes[pageId];
+            if(theme) {
+                targetStarColor.setHex(theme.star);
+                targetFogColor.setHex(theme.fog);
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateIcons();
+            updateStarColor(isLight);
+        }
+
+        function updateIcons() {
+            const btn = document.getElementById('themeBtn');
+            const isLight = document.body.classList.contains('light-mode');
+            btn.innerHTML = isLight ? '<i data-lucide="sun" class="w-5 h-5 text-yellow-500"></i>' : '<i data-lucide="moon" class="w-5 h-5"></i>';
+            lucide.createIcons();
+        }
+
+        function updateStarColor(isLight) {
+            if (isLight) {
+                targetStarColor.setHex(0x1e1b4b);
+                targetFogColor.setHex(0xf3f4f6);
+                if(nebulaMaterial) nebulaMaterial.opacity = 0.05;
+            } else {
+                // mevcut temaya don
+                const currentId = sections[currentSectionIndex];
+                updateThemeColors(currentId);
+                if(nebulaMaterial) nebulaMaterial.opacity = 0.1;
+            }
+        }
+
+        const handleSpotlight = (e) => {
+            const cards = document.querySelectorAll(".glass-card");
+            for(const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            };
+        }
+        
+        document.addEventListener('mousemove', handleSpotlight);
+
+        // --- yapay zeka kodlari ---
+        async function callGemini(prompt) {
+            if (!apiKey) { return null; }
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            try {
+                const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({contents: [{parts: [{text: prompt}]}]}) });
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (e) { console.error(e); return "Hata oluştu."; }
+        }
+
+        function openAiModal() {
+            const m = document.getElementById('aiModal'); m.classList.remove('hidden');
+            setTimeout(() => { m.querySelector('.ai-modal-content').classList.remove('scale-95', 'opacity-0'); m.querySelector('.ai-modal-content').classList.add('scale-100', 'opacity-100'); }, 10);
+            document.getElementById('aiPrompt').focus();
+        }
+        function closeAiModal() {
+            const m = document.getElementById('aiModal'); m.querySelector('.ai-modal-content').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => m.classList.add('hidden'), 200);
+        }
+        function handleEnter(e) { if(e.key === 'Enter') generateCode(); }
+
+        async function generateCode() {
+            const p = document.getElementById('aiPrompt'); const r = document.getElementById('aiResult'); const b = document.getElementById('generateBtn');
+            if (!p.value.trim()) return;
+            b.disabled = true; b.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i>'; lucide.createIcons();
+            r.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-indigo-400 gap-3"><div class="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div><p class="text-sm animate-pulse font-mono">Gemini Kodluyor...</p></div>';
+            
+            const response = await callGemini(`You are an expert coder. Generate clean code in Turkish for: "${p.value.trim()}". Use Markdown code blocks.`);
+            if(response) r.innerHTML = `<div class="ai-response prose prose-invert max-w-none">${marked.parse(response)}</div>`;
+            
+            b.disabled = false; b.innerHTML = '<i data-lucide="sparkles"></i>'; lucide.createIcons();
+        }
+
+        async function refineMessage() {
+            const t = document.getElementById('suggestion'); const b = document.getElementById('refineBtn');
+            if(!t.value.trim()) { alert("Mesaj yazın."); return; }
+            const old = b.innerHTML; b.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i>'; lucide.createIcons();
+            const res = await callGemini(`Rewrite this Turkish text to be highly professional, polite and concise for a business inquiry: "${t.value}". Output text only.`);
+            if(res) t.value = res.trim();
+            b.innerHTML = old; lucide.createIcons();
+        }
+
+        // --- threejs yildizli arka plan (warp efekti) ---
+        const cvs = document.getElementById('bg-canvas');
+        const scn = new THREE.Scene();
+        // derinlik olsun diye biraz sis attim
+        scn.fog = new THREE.FogExp2(0x030303, 0.001);
+        
+        const cam = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+        cam.position.z = 1000;
+        
+        const ren = new THREE.WebGLRenderer({canvas: cvs, alpha: true, antialias: true});
+        ren.setSize(window.innerWidth, window.innerHeight);
+        ren.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // performans icin
+
+        // yildiz parcaciklari
+        const geo = new THREE.BufferGeometry();
+        const count = 15000;
+        const pos = new Float32Array(count*3);
+        const sizes = new Float32Array(count);
+        
+        for(let i=0; i<count*3; i++) {
+            pos[i] = (Math.random() - 0.5) * 2500; // genis dagit
+            if(i % 3 === 1) pos[i] = (Math.random() - 0.5) * 2500; // y ekseni
+            if(i % 3 === 2) pos[i] = (Math.random() - 0.5) * 2500; // z ekseni
+        }
+        for(let i=0; i<count; i++) {
+            sizes[i] = Math.random() * 2;
+        }
+
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        // yuvarlak parcaciklar icin ozel materyal
+        const starTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png');
+        starsMaterial = new THREE.PointsMaterial({
+            size: 2,
+            sizeAttenuation: true,
+            map: starTexture,
+            alphaTest: 0.5,
+            transparent: true,
+            color: 0x818cf8 // temel mor mavi tonu (degisiyo bu)
+        });
+
+        const stars = new THREE.Points(geo, starsMaterial);
+        scn.add(stars);
+
+        // nebula bulutlari
+        const nebulaGeo = new THREE.BufferGeometry();
+        const nebulaCount = 15; 
+        const nebulaPos = new Float32Array(nebulaCount * 3);
+        for(let i=0; i<nebulaCount*3; i++) nebulaPos[i] = (Math.random() - 0.5) * 1500; 
+        nebulaGeo.setAttribute('position', new THREE.BufferAttribute(nebulaPos, 3));
+        nebulaMaterial = new THREE.PointsMaterial({
+            size: 600, map: starTexture, transparent: true, opacity: 0.1, color: 0x4c1d95, depthWrite: false, blending: THREE.AdditiveBlending
+        });
+        const nebula = new THREE.Points(nebulaGeo, nebulaMaterial);
+        scn.add(nebula);
+
+        // kayan yildizlar
+        const meteors = [];
+        const meteorGeo = new THREE.BoxGeometry(2, 2, 80); 
+        const meteorMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+        for(let i=0; i<10; i++) {
+            const meteor = new THREE.Mesh(meteorGeo, meteorMat);
+            meteor.position.set(0, 5000, 0); scn.add(meteor);
+            meteors.push({mesh: meteor, speed: 0});
+        }
+        function resetMeteor(m) {
+            m.mesh.position.x = (Math.random() - 0.5) * 2000;
+            m.mesh.position.y = (Math.random() - 0.5) * 2000 + 1000; 
+            m.mesh.position.z = (Math.random() - 0.5) * 1000;
+            m.mesh.rotation.z = Math.PI / 4; m.mesh.rotation.x = Math.PI / 2;
+            m.speed = 15 + Math.random() * 20;
+        }
+
+        // animasyon dongusu
+        let mouseX = 0;
+        let mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+        });
+
+        const clk = new THREE.Clock();
+
+        function anim() {
+            const t = clk.getElapsedTime();
+            
+            // renkler icin yumusak gecis mantigi
+            if(starsMaterial) starsMaterial.color.lerp(targetStarColor, 0.05);
+            if(scn.fog) scn.fog.color.lerp(targetFogColor, 0.05);
+
+            // nav icin yumusak kamera gecisi
+            cameraBaseX += (targetPageX - cameraBaseX) * 0.03;
+
+            // hafif donme efekti
+            stars.rotation.x = t * 0.005;
+            stars.rotation.y = t * 0.01;
+            nebula.rotation.x = t * 0.001;
+            nebula.rotation.y = t * 0.002;
+
+            // meteorlar
+            meteors.forEach(m => {
+                m.mesh.position.x -= m.speed; m.mesh.position.y -= m.speed;
+                if(m.mesh.position.y < -1500 || m.mesh.position.x < -1500) { if(Math.random() > 0.98) resetMeteor(m); }
+            });
+
+            // mouse etkilesimi (parallax) + sayfa gecisi
+            // mouse etkisi ustte kaliyo
+            cam.position.x = cameraBaseX + (mouseX * 0.5); 
+            cam.position.y += (-mouseY - cam.position.y) * 0.05;
+            cam.lookAt(scn.position);
+
+            ren.render(scn, cam);
+            requestAnimationFrame(anim);
+        }
+        anim();
+    </script>
+</body>
+</html>
