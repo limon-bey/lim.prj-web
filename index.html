@@ -66,7 +66,7 @@
         body.cinema-mode #bg-canvas {
             opacity: 0 !important;
             pointer-events: none;
-            transition: opacity 5s ease; /* 5 saniyede kararma */
+            transition: opacity 5s ease;
         }
         
         #bg-video {
@@ -185,6 +185,7 @@
         body.light-mode .blink-cursor, body.light-mode .cursor-blink { color: #7e22ce; -webkit-text-fill-color: #7e22ce; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+        /* GÜNCELLENEN KART STİLİ */
         .glass-card {
             background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
             border-radius: 1.5rem; position: relative; overflow: hidden;
@@ -284,7 +285,14 @@
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #666;
             backdrop-filter: blur(5px); border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-weight: bold; font-family: monospace; cursor: pointer; z-index: 60;
-            transition: transform 2s ease, left 2s ease, background-color 3s ease, color 3s ease, box-shadow 3s ease, border-color 3s ease;
+            /* Daha yavaş süzülme efekti için transition güncellendi */
+            transition: 
+                transform 2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                left 2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                background-color 3s ease, 
+                color 3s ease, 
+                box-shadow 3s ease, 
+                border-color 3s ease;
         }
         .secret-btn:hover { background: white; color: black; transform: translateY(-50%) rotate(90deg); box-shadow: 0 0 20px white; }
 
@@ -307,12 +315,57 @@
             0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; box-shadow: 0 0 30px currentColor; }
             20%, 24%, 55% { opacity: 0.5; box-shadow: none; }
         }
+
+        /* GÜNCELLENMİŞ GİZLİ YAZI STİLİ */
+        .secret-text {
+            position: fixed; 
+            top: 15%; /* Navbarın hemen altı */
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 300; 
+            font-size: 1.5rem;
+            color: white; 
+            opacity: 0; 
+            pointer-events: none; 
+            z-index: 59; /* Butonun (60) arkasında */
+            text-align: center; 
+            width: 100%;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Varsayılan gölge */
+            
+            /* Yumuşak süzülme efekti için geçişler */
+            transition: 
+                opacity 5s ease, 
+                color 3s ease, 
+                text-shadow 3s ease, 
+                transform 5s ease-out;
+        }
+
+        /* Sinema modunda yavaşça görün */
+        body.cinema-mode .secret-text {
+            opacity: 1;
+        }
+
+        /* Kırmızı modunda yazı da kırmızı ve parlayan gölgeli */
+        body.cinema-mode.glow-active.glow-red .secret-text {
+            color: #ff0000;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.4);
+        }
+        
+        /* Beyaz moda (glow-active ama glow-red değil) dönünce yazı kaybolsun */
+        body.cinema-mode.glow-active:not(.glow-red) .secret-text {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px); /* Yukarı doğru silinme efekti */
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-purple-500/30 selection:text-white">
 
     <canvas id="bg-canvas"></canvas>
     <video id="bg-video" src="a1.mp4"></video>
+
+    <!-- GÜNCELLENMİŞ GİZLİ YAZI -->
+    <div class="secret-text">Bu websiteyi yaparken hissettiğim...</div>
 
     <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-auto max-w-[95%] transition-all duration-300">
         <div class="nav-capsule rounded-full p-2 pr-3 pl-5 flex items-center gap-6 sm:gap-8">
@@ -441,6 +494,7 @@
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="database" class="w-4 h-4 text-orange-400"></i> Firebase</div>
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="git-branch" class="w-4 h-4 text-red-400"></i> Git</div>
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="atom" class="w-4 h-4 text-blue-400"></i> React</div>
+                            
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="hexagon" class="w-4 h-4 text-green-500"></i> Node.js</div>
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="box" class="w-4 h-4 text-white force-text-white"></i> Three.js</div>
                             <div class="marquee-item flex items-center gap-2 text-gray-400 font-bold font-mono text-xs hover:text-white transition-colors cursor-default"><i data-lucide="wind" class="w-4 h-4 text-cyan-400"></i> Tailwind</div>
@@ -457,17 +511,8 @@
                 <div class="glass-card rounded-[3rem] p-10 md:p-16 relative overflow-hidden group">
                     <div class="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none transition-opacity duration-700 group-hover:opacity-70"></div>
                     <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div class="flex flex-col gap-2 text-center md:text-left">
-                            <span class="text-white font-black text-3xl tracking-tighter font-display">lim-web</span>
-                            <span class="text-gray-500 text-sm font-mono">Minimalist. Performanslı. Modern.</span>
-                            <span class="text-gray-600 text-xs mt-4">© 2025 Designed by limon</span>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <a href="https://github.com/limon-bey" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-white transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="github" class="w-5 h-5"></i></a>
-                            <a href="https://twitter.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-blue-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                            <a href="https://instagram.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-pink-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-                            <a href="https://youtube.com/@frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-red-500 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="youtube" class="w-5 h-5"></i></a>
-                        </div>
+                        <div class="flex flex-col gap-2 text-center md:text-left"><span class="text-white font-black text-3xl tracking-tighter font-display">lim-web</span><span class="text-gray-500 text-sm font-mono">Minimalist. Performanslı. Modern.</span><span class="text-gray-600 text-xs mt-4">© 2025 Designed by limon</span></div>
+                        <div class="flex items-center gap-4"><a href="https://github.com/limon-bey" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-white transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="github" class="w-5 h-5"></i></a><a href="https://twitter.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-blue-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="twitter" class="w-5 h-5"></i></a><a href="https://instagram.com/frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-pink-400 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="instagram" class="w-5 h-5"></i></a><a href="https://youtube.com/@frostium_" target="_blank" class="p-3 rounded-full bg-white/5 hover:bg-white/10 !text-gray-400 hover:!text-red-500 transition-all hover:-translate-y-1 hover:shadow-lg border border-white/5"><i data-lucide="youtube" class="w-5 h-5"></i></a></div>
                     </div>
                 </div>
             </footer>
@@ -585,6 +630,7 @@
                 </div>
             </footer>
         </section>
+
     </main>
 
     <div id="aiModal" class="fixed inset-0 z-[100] hidden">
@@ -1078,6 +1124,7 @@
             });
 
             cam.lookAt(scn.position);
+
             ren.render(scn, cam);
             requestAnimationFrame(anim);
         }
